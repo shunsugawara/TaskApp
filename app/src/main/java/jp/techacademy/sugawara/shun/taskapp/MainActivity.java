@@ -10,10 +10,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -32,11 +35,12 @@ public class MainActivity extends AppCompatActivity {
     private RealmChangeListener mRealmListener = new RealmChangeListener() {
         @Override
         public void onChange(Object element) {
-            reloadListView();
+            reloadListView("");
         }
     };
     private ListView mListView;
     private TaskAdapter mTaskadapter;
+    private EditText mSearchEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         mTaskadapter = new TaskAdapter(MainActivity.this);
         mListView = (ListView) findViewById(R.id.listView1);
+        mSearchEditText = (EditText) findViewById(R.id.search_edit_text);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -101,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                         alarmManager.cancel(resultPendingIntent);
 
 
-                        reloadListView();
+                        reloadListView("");
                     }
                 });
                 builder.setNegativeButton("CANCEL", null);
@@ -113,18 +118,44 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mSearchEditText.addTextChangedListener(
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        reloadListView(mSearchEditText.getText().toString());
+                    }
+                }
+        );
+
 //        addTaskForTest();
 
-        reloadListView();
-
+        reloadListView("");
     }
 
-    private void reloadListView(){
-
-        RealmResults<Task> taskRealmResults = mRealm.where(Task.class).findAll().sort("date", Sort.ASCENDING);
+    private void reloadListView(String searchword){
+        //課題用に修正
+        RealmResults<Task> taskRealmResults = mRealm.where(Task.class)
+                .contains("category",searchword)
+                .findAll()
+                .sort("date", Sort.ASCENDING);
         mTaskadapter.setTaskList(mRealm.copyFromRealm(taskRealmResults));
         mListView.setAdapter(mTaskadapter);
         mTaskadapter.notifyDataSetChanged();
+
+        //lesson ver
+//        RealmResults<Task> taskRealmResults = mRealm.where(Task.class).findAll().sort("date", Sort.ASCENDING);
+//        mTaskadapter.setTaskList(mRealm.copyFromRealm(taskRealmResults));
+//        mListView.setAdapter(mTaskadapter);
+//        mTaskadapter.notifyDataSetChanged();
+
 //      test用
 //        List<String> taskList = new ArrayList<String>();
 //        taskList.add("aaa");
@@ -136,6 +167,9 @@ public class MainActivity extends AppCompatActivity {
 //        mTaskadapter.notifyDataSetChanged();
 
     }
+
+
+
 
     @Override
     protected void onDestroy(){

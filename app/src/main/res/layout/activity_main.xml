@@ -11,14 +11,17 @@
         android:id="@+id/search_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="カテゴリ検索" />
+        android:hint="カテゴリ検索"
+        android:textSize="30dp"/>
 
     <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="40dp"
-        android:layout_below="@id/search_edit_text"></ListView>
+        android:paddingTop="70dp"
+        android:layout_below="@id/search_edit_text">
+
+    </ListView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

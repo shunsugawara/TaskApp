@@ -2,6 +2,7 @@ package jp.techacademy.sugawara.shun.taskapp;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -138,6 +140,16 @@ public class MainActivity extends AppCompatActivity {
 //        addTaskForTest();
 
         reloadListView("");
+
+
+
+    }
+
+    protected void onResume(){
+        super.onResume();
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mSearchEditText.getWindowToken(), 0);
+
     }
 
     private void reloadListView(String searchword){
